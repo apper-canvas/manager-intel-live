@@ -33,12 +33,12 @@ const [formData, setFormData] = useState({
   useEffect(() => {
     if (isEditMode && employee) {
       setFormData({
-        name: employee.name || "",
-        email: employee.email || "",
-        phone: employee.phone || "",
-        position: employee.position || "",
-        department: employee.department || "",
-        startDate: employee.startDate ? employee.startDate.split('T')[0] : ""
+        name: employee.Name || "",
+        email: employee.email_c || "",
+        phone: employee.phone_c || "",
+        position: employee.position_c || "",
+        department: employee.department_c || "",
+        startDate: employee.start_date_c ? employee.start_date_c.split('T')[0] : ""
       });
     }
   }, [isEditMode, employee]);
@@ -93,13 +93,32 @@ const handleSubmit = async (e) => {
     }
 
     setIsSubmitting(true);
-    try {
+try {
       let result;
       if (isEditMode) {
-        result = await employeeService.update(employee.Id, formData);
+        // Map form data to database field names for update
+        const updateData = {
+          Name: formData.name,
+          email_c: formData.email,
+          phone_c: formData.phone,
+          position_c: formData.position,
+          department_c: formData.department,
+          start_date_c: formData.startDate
+        };
+        result = await employeeService.update(employee.Id, updateData);
         toast.success("Employee updated successfully!");
       } else {
-        result = await employeeService.create(formData);
+        // Map form data to database field names for create
+        const createData = {
+          Name: formData.name,
+          email_c: formData.email,
+          phone_c: formData.phone,
+          position_c: formData.position,
+          department_c: formData.department,
+          start_date_c: formData.startDate,
+          status_c: "Active"
+        };
+        result = await employeeService.create(createData);
         toast.success("Employee added successfully!");
       }
       onEmployeeAdded(result);

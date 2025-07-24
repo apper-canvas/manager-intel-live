@@ -113,12 +113,12 @@ const handleDeleteEmployee = async (employeeId) => {
   };
 
 // Filter and sort employees
-  const filteredAndSortedEmployees = React.useMemo(() => {
+const filteredAndSortedEmployees = React.useMemo(() => {
     let filtered = employees.filter(employee =>
-      employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.department.toLowerCase().includes(searchTerm.toLowerCase())
+      employee.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.email_c.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.position_c.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.department_c.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (sortConfig.key) {
@@ -272,7 +272,7 @@ const handleDeleteEmployee = async (employeeId) => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+<tbody className="bg-white divide-y divide-gray-200">
               {filteredAndSortedEmployees.map((employee, index) => (
                 <tr
                   key={employee.Id}
@@ -286,40 +286,40 @@ const handleDeleteEmployee = async (employeeId) => {
                       <div className="h-10 w-10 flex-shrink-0">
                         <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-500 to-primary-600 flex items-center justify-center">
                           <span className="text-sm font-medium text-white">
-                            {employee.name.split(" ").map(n => n[0]).join("").substring(0, 2)}
+                            {employee.Name.split(" ").map(n => n[0]).join("").substring(0, 2)}
                           </span>
                         </div>
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {employee.name}
+                          {employee.Name}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {employee.phone}
+                          {employee.phone_c}
                         </div>
                       </div>
                     </div>
-</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {renderEditableCell(employee, 'name', employee.name)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {renderEditableCell(employee, 'position', employee.position)}
+                    {renderEditableCell(employee, 'Name', employee.Name)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {renderEditableCell(employee, 'position_c', employee.position_c)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                      {employee.department}
+                      {employee.department_c}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {renderEditableCell(employee, 'email', employee.email)}
+                    {renderEditableCell(employee, 'email_c', employee.email_c)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {format(new Date(employee.startDate), "MMM dd, yyyy")}
+                    {format(new Date(employee.start_date_c), "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-<Button
+                      <Button
                         variant="ghost"
                         size="sm"
                         className="text-gray-600 hover:text-primary-600"
@@ -337,7 +337,7 @@ const handleDeleteEmployee = async (employeeId) => {
                       </Button>
                     </div>
                   </td>
-</tr>
+                </tr>
               ))}
 </tbody>
           </table>

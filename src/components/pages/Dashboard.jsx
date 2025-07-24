@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadDashboardData = async () => {
+const loadDashboardData = async () => {
     try {
       setLoading(true);
       setError("");
@@ -28,19 +28,19 @@ const Dashboard = () => {
         departmentService.getAll()
       ]);
 
-      // Calculate department counts
+      // Calculate department counts using database field names
       const departmentCounts = {};
       employees.forEach(emp => {
-        departmentCounts[emp.department] = (departmentCounts[emp.department] || 0) + 1;
+        departmentCounts[emp.department_c] = (departmentCounts[emp.department_c] || 0) + 1;
       });
 
-      // Get recent hires (last 30 days)
+      // Get recent hires (last 30 days) using database field names
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
       const recentHires = employees
-        .filter(emp => new Date(emp.startDate) >= thirtyDaysAgo)
-        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+        .filter(emp => new Date(emp.start_date_c) >= thirtyDaysAgo)
+        .sort((a, b) => new Date(b.start_date_c) - new Date(a.start_date_c))
         .slice(0, 5);
 
       setDashboardData({
@@ -184,24 +184,24 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-4">
-            {dashboardData.recentHires.length > 0 ? (
+{dashboardData.recentHires.length > 0 ? (
               dashboardData.recentHires.map((employee) => (
                 <div key={employee.Id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-500 to-primary-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {employee.name.split(" ").map(n => n[0]).join("").substring(0, 2)}
+                      {employee.Name.split(" ").map(n => n[0]).join("").substring(0, 2)}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {employee.name}
+                      {employee.Name}
                     </p>
                     <p className="text-sm text-gray-500 truncate">
-                      {employee.position} • {employee.department}
+                      {employee.position_c} • {employee.department_c}
                     </p>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {format(parseISO(employee.startDate), "MMM dd")}
+                    {format(parseISO(employee.start_date_c), "MMM dd")}
                   </div>
                 </div>
               ))

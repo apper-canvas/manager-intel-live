@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { AuthContext } from "../../App";
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { logout } = useContext(AuthContext);
 
+  // Navigation items
   const navigation = [
     { name: "Dashboard", href: "/", icon: "LayoutDashboard" },
     { name: "Employees", href: "/employees", icon: "Users" },
@@ -16,9 +18,8 @@ const Layout = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
-
   // Desktop Sidebar Component
-  const DesktopSidebar = () => (
+const DesktopSidebar = () => (
     <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0">
       <div className="glass-sidebar flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-6">
@@ -60,12 +61,23 @@ const Layout = () => {
             </NavLink>
           ))}
         </nav>
+        
+        {/* Logout Button */}
+        <div className="px-4 pb-4">
+          <button
+            onClick={logout}
+            className="w-full flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl transition-all duration-200"
+          >
+            <ApperIcon name="LogOut" className="mr-3 h-5 w-5 text-gray-400" />
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
 
   // Mobile Sidebar Component
-  const MobileSidebar = () => (
+const MobileSidebar = () => (
     <AnimatePresence>
       {isMobileMenuOpen && (
         <>
@@ -130,6 +142,20 @@ const Layout = () => {
                   </NavLink>
                 ))}
               </nav>
+              
+              {/* Mobile Logout Button */}
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => {
+                    logout();
+                    closeMobileMenu();
+                  }}
+                  className="w-full flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl transition-all duration-200"
+                >
+                  <ApperIcon name="LogOut" className="mr-3 h-5 w-5 text-gray-400" />
+                  Logout
+                </button>
+              </div>
             </div>
           </motion.div>
         </>
