@@ -1,0 +1,102 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@company.com",
+    "phone": "+1 (555) 123-4567",
+    "position": "Senior Software Engineer",
+    "department": "Engineering",
+    "startDate": "2023-03-15",
+    "status": "Active"
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "michael.chen@company.com",
+    "phone": "+1 (555) 234-5678",
+    "position": "Product Manager",
+    "department": "Product",
+    "startDate": "2023-01-22",
+    "status": "Active"
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily.rodriguez@company.com",
+    "phone": "+1 (555) 345-6789",
+    "position": "UX Designer",
+    "department": "Design",
+    "startDate": "2023-05-08",
+    "status": "Active"
+  },
+  {
+    "Id": 4,
+    "name": "David Kim",
+    "email": "david.kim@company.com",
+    "phone": "+1 (555) 456-7890",
+    "position": "Marketing Specialist",
+    "department": "Marketing",
+    "startDate": "2023-02-14",
+    "status": "Active"
+  },
+  {
+    "Id": 5,
+    "name": "Jessica Thompson",
+    "email": "jessica.thompson@company.com",
+    "phone": "+1 (555) 567-8901",
+    "position": "HR Business Partner",
+    "department": "Human Resources",
+    "startDate": "2023-04-03",
+    "status": "Active"
+  },
+  {
+    "Id": 6,
+    "name": "Robert Wilson",
+    "email": "robert.wilson@company.com",
+    "phone": "+1 (555) 678-9012",
+    "position": "Financial Analyst",
+    "department": "Finance",
+    "startDate": "2023-06-12",
+    "status": "Active"
+  },
+  {
+    "Id": 7,
+    "name": "Amanda Davis",
+    "email": "amanda.davis@company.com",
+    "phone": "+1 (555) 789-0123",
+    "position": "Sales Representative",
+    "department": "Sales",
+    "startDate": "2023-03-28",
+    "status": "Active"
+  },
+  {
+    "Id": 8,
+    "name": "James Brown",
+    "email": "james.brown@company.com",
+    "phone": "+1 (555) 890-1234",
+    "position": "DevOps Engineer",
+    "department": "Engineering",
+    "startDate": "2023-07-19",
+    "status": "Active"
+  },
+  {
+    "Id": 9,
+    "name": "Lisa Garcia",
+    "email": "lisa.garcia@company.com",
+    "phone": "+1 (555) 901-2345",
+    "position": "Content Marketing Manager",
+    "department": "Marketing",
+    "startDate": "2023-08-07",
+    "status": "Active"
+  },
+  {
+    "Id": 10,
+    "name": "Kevin Lee",
+    "email": "kevin.lee@company.com",
+    "phone": "+1 (555) 012-3456",
+    "position": "Quality Assurance Engineer",
+    "department": "Engineering",
+    "startDate": "2023-09-14",
+    "status": "Active"
+  }
+]
