@@ -14,7 +14,7 @@ import Departments from "@/components/pages/Departments";
 import Signup from "@/components/pages/Signup";
 import Callback from "@/components/pages/Callback";
 import ResetPassword from "@/components/pages/ResetPassword";
-import Layout from "@/components/Layout";
+import Layout from "@/components/organisms/Layout";
 
 // Create auth context
 export const AuthContext = createContext(null);
