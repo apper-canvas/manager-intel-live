@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
+import { cn } from "@/utils/cn";
 import { employeeService } from "@/services/api/employeeService";
+import ApperIcon from "@/components/ApperIcon";
+import AddEmployeeModal from "@/components/organisms/AddEmployeeModal";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
-import ApperIcon from "@/components/ApperIcon";
-import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import { cn } from "@/utils/cn";
-import { format } from "date-fns";
+import Loading from "@/components/ui/Loading";
 
 const EmployeeTable = ({ onAddEmployee }) => {
-  const [employees, setEmployees] = useState([]);
+const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [editingCell, setEditingCell] = useState(null);
+  const [editingValue, setEditingValue] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const loadEmployees = async () => {
     try {
@@ -31,9 +36,54 @@ const EmployeeTable = ({ onAddEmployee }) => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     loadEmployees();
   }, []);
+
+  const handleCellEdit = (employeeId, field, currentValue) => {
+    setEditingCell({ employeeId, field });
+    setEditingValue(currentValue);
+  };
+
+  const handleCellSave = async (employeeId, field) => {
+    if (editingValue.trim() === "") {
+      toast.error("Value cannot be empty");
+      return;
+    }
+
+    try {
+      const updatedEmployee = await employeeService.update(employeeId, {
+        [field]: editingValue
+      });
+      setEmployees(employees.map(emp => 
+        emp.Id === employeeId ? updatedEmployee : emp
+      ));
+      setEditingCell(null);
+      setEditingValue("");
+      toast.success("Employee updated successfully");
+    } catch (err) {
+      toast.error("Failed to update employee");
+      console.error("Error updating employee:", err);
+    }
+  };
+
+  const handleCellCancel = () => {
+    setEditingCell(null);
+    setEditingValue("");
+  };
+
+  const handleEditEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEmployeeUpdated = (updatedEmployee) => {
+    setEmployees(employees.map(emp => 
+      emp.Id === updatedEmployee.Id ? updatedEmployee : emp
+    ));
+    setIsEditModalOpen(false);
+    setSelectedEmployee(null);
+  };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -47,7 +97,7 @@ const EmployeeTable = ({ onAddEmployee }) => {
     setSortConfig({ key, direction });
   };
 
-  const handleDeleteEmployee = async (employeeId) => {
+const handleDeleteEmployee = async (employeeId) => {
     if (!window.confirm("Are you sure you want to delete this employee?")) {
       return;
     }
@@ -62,7 +112,7 @@ const EmployeeTable = ({ onAddEmployee }) => {
     }
   };
 
-  // Filter and sort employees
+// Filter and sort employees
   const filteredAndSortedEmployees = React.useMemo(() => {
     let filtered = employees.filter(employee =>
       employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,6 +135,53 @@ const EmployeeTable = ({ onAddEmployee }) => {
 
     return filtered;
   }, [employees, searchTerm, sortConfig]);
+
+  const renderEditableCell = (employee, field, value) => {
+    const isEditing = editingCell && editingCell.employeeId === employee.Id && editingCell.field === field;
+    
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={editingValue}
+            onChange={(e) => setEditingValue(e.target.value)}
+            className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleCellSave(employee.Id, field);
+              } else if (e.key === 'Escape') {
+                handleCellCancel();
+              }
+            }}
+            autoFocus
+          />
+          <button
+            onClick={() => handleCellSave(employee.Id, field)}
+            className="p-1 text-green-600 hover:text-green-800"
+          >
+            <ApperIcon name="Check" className="h-3 w-3" />
+          </button>
+          <button
+            onClick={handleCellCancel}
+            className="p-1 text-red-600 hover:text-red-800"
+          >
+            <ApperIcon name="X" className="h-3 w-3" />
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div 
+        className="cursor-pointer hover:bg-gray-50 px-2 py-1 rounded group"
+        onClick={() => handleCellEdit(employee.Id, field, value)}
+      >
+        <span className="text-sm text-gray-900">{value}</span>
+        <ApperIcon name="Edit" className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 ml-2 inline" />
+      </div>
+    );
+  };
 
   if (loading) {
     return <Loading type="table" />;
@@ -197,9 +294,12 @@ const EmployeeTable = ({ onAddEmployee }) => {
                         </div>
                       </div>
                     </div>
+</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {renderEditableCell(employee, 'name', employee.name)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{employee.position}</div>
+                    {renderEditableCell(employee, 'position', employee.position)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
@@ -207,17 +307,18 @@ const EmployeeTable = ({ onAddEmployee }) => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{employee.email}</div>
+                    {renderEditableCell(employee, 'email', employee.email)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {format(new Date(employee.startDate), "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-                      <Button
+<Button
                         variant="ghost"
                         size="sm"
                         className="text-gray-600 hover:text-primary-600"
+                        onClick={() => handleEditEmployee(employee)}
                       >
                         <ApperIcon name="Edit" className="h-4 w-4" />
                       </Button>
@@ -231,12 +332,26 @@ const EmployeeTable = ({ onAddEmployee }) => {
                       </Button>
                     </div>
                   </td>
-                </tr>
+</tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Edit Employee Modal */}
+      {isEditModalOpen && selectedEmployee && (
+        <AddEmployeeModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedEmployee(null);
+          }}
+          onEmployeeAdded={handleEmployeeUpdated}
+          employee={selectedEmployee}
+          isEditMode={true}
+        />
+      )}
     </div>
   );
 };

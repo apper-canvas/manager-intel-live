@@ -1,26 +1,21 @@
 import React, { useState } from "react";
-import EmployeeTable from "@/components/organisms/EmployeeTable";
 import AddEmployeeModal from "@/components/organisms/AddEmployeeModal";
+import EmployeeTable from "@/components/organisms/EmployeeTable";
 
 const Employees = () => {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleAddEmployee = () => {
+const handleAddEmployee = () => {
     setIsAddModalOpen(true);
   };
 
   const handleEmployeeAdded = () => {
     setRefreshKey(prev => prev + 1);
-  };
-
+};
+  
   return (
     <div>
-      <EmployeeTable 
-        key={refreshKey}
-        onAddEmployee={handleAddEmployee}
-      />
-      
+      <EmployeeTable onAddEmployee={handleAddEmployee} key={refreshKey} />
       <AddEmployeeModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

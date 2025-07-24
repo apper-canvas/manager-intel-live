@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { employeeService } from "@/services/api/employeeService";
 import Button from "@/components/atoms/Button";
@@ -6,9 +6,8 @@ import FormField from "@/components/molecules/FormField";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
-
-const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
-  const [formData, setFormData] = useState({
+const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded, employee = null, isEditMode = false }) => {
+const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
@@ -30,6 +29,20 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
     "Operations"
   ];
 
+// Populate form data when editing
+  useEffect(() => {
+    if (isEditMode && employee) {
+      setFormData({
+        name: employee.name || "",
+        email: employee.email || "",
+        phone: employee.phone || "",
+        position: employee.position || "",
+        department: employee.department || "",
+        startDate: employee.startDate ? employee.startDate.split('T')[0] : ""
+      });
+    }
+  }, [isEditMode, employee]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -39,7 +52,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
@@ -72,7 +85,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -81,19 +94,25 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
 
     setIsSubmitting(true);
     try {
-      const newEmployee = await employeeService.create(formData);
-      toast.success("Employee added successfully!");
-      onEmployeeAdded(newEmployee);
+      let result;
+      if (isEditMode) {
+        result = await employeeService.update(employee.Id, formData);
+        toast.success("Employee updated successfully!");
+      } else {
+        result = await employeeService.create(formData);
+        toast.success("Employee added successfully!");
+      }
+      onEmployeeAdded(result);
       handleClose();
     } catch (err) {
-      toast.error("Failed to add employee. Please try again.");
-      console.error("Error adding employee:", err);
+      toast.error(isEditMode ? "Failed to update employee. Please try again." : "Failed to add employee. Please try again.");
+      console.error("Error saving employee:", err);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
+const handleClose = () => {
     setFormData({
       name: "",
       email: "",
@@ -133,8 +152,8 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
                       <div className="p-2 rounded-xl bg-gradient-to-r from-cyan-500 to-primary-600">
                         <ApperIcon name="UserPlus" className="h-6 w-6 text-white" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        Add New Employee
+<h3 className="text-xl font-semibold text-gray-900">
+                        {isEditMode ? "Edit Employee" : "Add New Employee"}
                       </h3>
                     </div>
                     <button
@@ -242,18 +261,18 @@ const AddEmployeeModal = ({ isOpen, onClose, onEmployeeAdded }) => {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+disabled={isSubmitting}
                     className="order-1 sm:order-2 gap-2"
                   >
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Adding...
+                        {isEditMode ? "Updating..." : "Adding..."}
                       </>
                     ) : (
                       <>
-                        <ApperIcon name="Plus" className="h-4 w-4" />
-                        Add Employee
+                        <ApperIcon name={isEditMode ? "Save" : "Plus"} className="h-4 w-4" />
+                        {isEditMode ? "Update Employee" : "Add Employee"}
                       </>
                     )}
                   </Button>
