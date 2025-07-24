@@ -14,7 +14,7 @@ const handleAddEmployee = () => {
 };
   
   return (
-    <div>
+<div className="h-full flex flex-col">
       <EmployeeTable onAddEmployee={handleAddEmployee} key={refreshKey} />
       <AddEmployeeModal
         isOpen={isAddModalOpen}

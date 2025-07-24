@@ -204,40 +204,45 @@ const handleDeleteEmployee = async (employeeId) => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Employee Directory</h2>
-          <p className="text-gray-600 mt-1">
-            Manage your team members and their information
-          </p>
+<div className="h-full flex flex-col">
+{/* Sticky Header Section */}
+      <div className="sticky top-0 bg-white z-10 pb-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Employee Directory</h2>
+            <p className="text-gray-600 mt-1">
+              Manage your team members and their information
+            </p>
+          </div>
+          <Button onClick={onAddEmployee} className="gap-2 shrink-0">
+            <ApperIcon name="Plus" className="h-4 w-4" />
+            Add Employee
+          </Button>
         </div>
-        <Button onClick={onAddEmployee} className="gap-2 shrink-0">
-          <ApperIcon name="Plus" className="h-4 w-4" />
-          Add Employee
-        </Button>
-      </div>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <SearchBar
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder="Search employees..."
-          className="flex-1"
-        />
-        <div className="text-sm text-gray-600 flex items-center gap-2">
-          <ApperIcon name="Users" className="h-4 w-4" />
-          {filteredAndSortedEmployees.length} employee{filteredAndSortedEmployees.length !== 1 ? "s" : ""}
+        {/* Search and Filters */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <SearchBar
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Search employees..."
+            className="flex-1"
+          />
+          <div className="text-sm text-gray-600 flex items-center gap-2">
+            <ApperIcon name="Users" className="h-4 w-4" />
+            {filteredAndSortedEmployees.length} employee{filteredAndSortedEmployees.length !== 1 ? "s" : ""}
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+{/* Scrollable Table Container */}
+      <div className="flex-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="h-full overflow-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+<thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
                 {[
                   { key: "name", label: "Name" },
@@ -334,8 +339,9 @@ const handleDeleteEmployee = async (employeeId) => {
                   </td>
 </tr>
               ))}
-            </tbody>
+</tbody>
           </table>
+        </div>
         </div>
       </div>
 
